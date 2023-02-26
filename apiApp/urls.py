@@ -11,5 +11,10 @@ urlpatterns = [
     path('userSignIn',views.userSignIn,name='userSignIn'),
     path('userProfile',views.userProfile,name='userProfile'),
     path('userCurriculum',views.userCurriculum,name='userCurriculum'),
+    path('sideBar',views.sideBar,name='sideBar'),
+    path('studentTestView',views.studentTestView,name='studentTestView'),
+    path('studentReportView',views.studentReportView,name='studentReportView'),
+    # path('index',views.index,name='index'),
+    
 
 ] +static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)

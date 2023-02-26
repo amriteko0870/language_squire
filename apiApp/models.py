@@ -18,3 +18,19 @@ class user_login(models.Model):
 
 class curriculum(models.Model):
     name = models.TextField(blank=False,null= False)
+
+class set_of_test(models.Model):
+    name = models.TextField()
+    description = models.TextField()
+
+class test_assigned(models.Model):
+    user_id = models.TextField()
+    set_of_test_id = models.TextField()
+    completion_status = models.BooleanField(default=False)
+    listening_score = models.TextField(blank=True)
+    reading_score = models.TextField(blank=True)
+    writing_score = models.TextField(blank=True)
+    speaking_score = models.TextField(blank=True)
+    writing_remarks = models.TextField(blank=True)
+    speaking_remarks = models.TextField(blank=True)
+    admin_check_status = models.BooleanField(default=False)

@@ -1,0 +1,13 @@
+{
+  "pageData": {
+    "status": true,
+    "message": "profile generated successfully",
+    "first_name": "vivek3",
+    "last_name": "khanal3",
+    "email": "vivek3@gmail.com",
+    "phone_code": "+11",
+    "phone_no": "8638990230",
+    "age": "26",
+    "gender": "Female"
+  }
+}
