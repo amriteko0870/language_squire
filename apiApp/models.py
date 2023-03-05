@@ -1,3 +1,5 @@
+from datetime import datetime
+import pytz
 from django.db import models
 
 # Create your models here.
@@ -12,9 +14,15 @@ class user_login(models.Model):
     gender = models.TextField()
     password = models.TextField()
     user_type = models.TextField() # s-> superadmin, a-> Admin, u -> User
+    batch_id = models.TextField(default='u')
     active_course = models.TextField(blank=True)
     payment_status = models.BooleanField()
+    date_time = models.TextField(default=str(datetime.now(pytz.timezone("Asia/Kolkata"))))
     token = models.TextField()
+
+class batch_creation(models.Model):
+    date_time = models.TextField(default=str(datetime.now(pytz.timezone("Asia/Kolkata"))))
+    student_count = models.TextField(default='0')
 
 class curriculum(models.Model):
     name = models.TextField(blank=False,null= False)
