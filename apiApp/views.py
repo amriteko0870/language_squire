@@ -363,22 +363,30 @@ def studentTestView(request):
                                                 {
                                                 "id": 1,
                                                 "name": "Listening",
+                                                'path':'',
                                                 "time": 40,
+                                                "status": i['listening_status'],
                                                 },
                                                 {
                                                 "id": 2,
                                                 "name": "Reading",
+                                                'path':'',
                                                 "time": 60,
+                                                "status": i['reading_status'],
                                                 },
                                                 {
                                                 "id": 3,
                                                 "name": "Writing",
+                                                'path':'',
                                                 "time": 60,
+                                                "status": i['writing_status'],
                                                 },
                                                 {
                                                 "id": 4,
                                                 "name": "Speaking",
+                                                'path':'',
                                                 "time": False,
+                                                "status": i['speaking_status'],
                                                 },
                                         ]
             testData.append(single_test_data)
@@ -388,7 +396,53 @@ def studentTestView(request):
     return Response(testData)
 
 
+@api_view(['POST'])
+def readingTestPage(request):
+    data = request.data
+    try:
+        token = data['token']
+        user_login.objects.get(token = token)
+    except:
+        res = {
+                'status':False,
+                'message': 'Something went wrong'
+              }
+        return Response(res)
+    test_id = data['test_id']
+    test_set_name = set_of_test.objects.filter(id = test_id).values().last()['name']
+    res = {}
+    res['test_name'] = 'Reading'
+    res['time'] = 60000
+    res['img_path'] = 'media/mock_test/'+test_set_name+'/reading/'
+    answers = []
+    for i in range(1,41):
+        answers.append({'id':i,'answer':''})
+    res['answers'] = answers
+    image_array = os.listdir('media/mock_test/'+test_set_name+'/reading')
+    res['image_array'] = image_array
+    return Response(res)
 
+@api_view(['POST'])
+def readingTestSubmit(request):
+    data = request.data
+    try:
+        token = data['token']
+        user = user_login.objects.get(token = token)
+    except:
+        res = {
+                'status':False,
+                'message': 'Something went wrong'
+              }
+        return Response(res)
+    test_id = data['test_id']
+    answers = str(data['pageData']['answers'])
+    test_assigned.objects.filter(user_id = user.id,set_of_test_id = test_id).update(reading_answers = answers,reading_status = True)
+    res = {
+            'status':True,
+            'message':'Test submitted successfully'
+          }
+    return Response(res)
+    
 # @api_view(['GET'])
 # def index(request):
     # for i in range(1,31):

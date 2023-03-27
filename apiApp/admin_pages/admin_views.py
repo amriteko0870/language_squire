@@ -52,7 +52,7 @@ def adminBatchList(request):
     pageData['batch_name'] = pageData['id'].apply(lambda x : 'Batch '+ str(x))
     pageData['created_date'] = pageData['date_time'].apply(lambda x : str(x)[:10])
     pageData['created_time'] = pageData['date_time'].apply(lambda x : str(x)[11:19])
-    pageData['total_students'] = pageData['student_count']
+    pageData['total_students'] = pageData['id'].apply( lambda x : user_login.objects.filter(batch_id = x).values().count())
     pageData = pageData[['batch_id','batch_name','created_date','created_time','total_students']]
     pageData = pageData.to_dict(orient='records')
     return Response(pageData)
@@ -126,7 +126,6 @@ def adminStudentList(request):
 @api_view(['POST'])
 def adminUpdateBatch(request):
     data = request.data
-    print(data)
     try:
         token = data['token']
         user_login.objects.get(token = token)
@@ -145,3 +144,94 @@ def adminUpdateBatch(request):
                 'message': 'Studentt batch updated'
               }
     return Response(res)
+
+@api_view(['POST'])
+def adminAssestmentBatchList(request):
+    data = request.data
+    try:
+        token = data['token']
+        user_login.objects.get(token = token)
+    except:
+        res = {
+                'status':False,
+                'message': 'Something went wrong'
+              }
+        return Response(res)
+    res = {}
+    batch_obj = batch_creation.objects.values()
+    batch_obj = pd.DataFrame(batch_obj)
+    batch_obj['batch_id'] = batch_obj['id']
+    batch_obj['batch_name'] = batch_obj['id'].apply(lambda x : 'Batch '+ str(x))
+    batch_obj['total_assignemnts'] = batch_obj['assignment_array'].apply(lambda x : len(eval(x)))
+    batch_obj['total_students'] = batch_obj['id'].apply( lambda x : user_login.objects.filter(batch_id = x).values().count())
+    batch_obj = batch_obj[['batch_id','batch_name','total_assignemnts','total_students']]
+    batch_obj = batch_obj.to_dict(orient='records')
+    res['assestment_batch'] = batch_obj
+    return Response(res)
+
+@api_view(['POST'])
+def assigmentModalView(request):
+    data = request.data
+    try:
+        token = data['token']
+        user_login.objects.get(token = token)
+    except:
+        res = {
+                'status':False,
+                'message': 'Something went wrong'
+              }
+        return Response(res)
+    batch_id = data['batch_id']
+    res = {}
+    allAssignmentList = set_of_test.objects.annotate(assignment_name = F('name'),assignment_id = F('id')).values('assignment_name','assignment_id')
+    res['allAssignmentList'] = allAssignmentList
+    batch_assignments = eval(batch_creation.objects.filter(id = batch_id).values().last()['assignment_array'])
+    currentAssignmentList = set_of_test.objects.filter(id__in = batch_assignments).annotate(assignment_name = F('name'),assignment_id = F('id'))\
+                                                                                  .values('assignment_name','assignment_id')
+    res['currentAssignmentList'] = currentAssignmentList
+    return Response(res)
+
+@api_view(['POST'])
+def addAssignmentToBatch(request):
+    data = request.data
+    try:
+        token = data['token']
+        user_login.objects.get(token = token)
+    except:
+        res = {
+                'status':False,
+                'message': 'Authentication failed'
+              }
+        return Response(res)
+    batch_id = data['batch_id']
+    assignment_id = data['assignment_id']
+    try:
+        set_of_test.objects.get(id = assignment_id)
+    except:
+        res = {
+                'status':False,
+                'message': 'Something went wrong'
+              }
+        return Response(res)
+    batch_assignments = eval(batch_creation.objects.filter(id = batch_id).values().last()['assignment_array'])
+    if assignment_id in batch_assignments:
+        res = {
+                'status':False,
+                'message': 'Assignment already in batch'
+              }
+        return Response(res)
+    else:
+        batch_assignments.append(str(assignment_id))
+        batch_creation.objects.filter(id = batch_id).update(assignment_array = str(batch_assignments))
+        student_list = user_login.objects.filter(batch_id = batch_id).values_list('id',flat=True)
+        for i in student_list:
+            test_obj = test_assigned(
+                                    user_id = str(i),
+                                    set_of_test_id = str(assignment_id),
+                                )
+            test_obj.save()
+        res = {
+                'status':True,
+                'message':'Assigmnet assigned to batch successfully'
+              }
+        return Response(res)

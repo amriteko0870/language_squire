@@ -23,6 +23,7 @@ class user_login(models.Model):
 class batch_creation(models.Model):
     date_time = models.TextField(default=str(datetime.now(pytz.timezone("Asia/Kolkata"))))
     student_count = models.TextField(default='0')
+    assignment_array = models.TextField(default='[]')
 
 class curriculum(models.Model):
     name = models.TextField(blank=False,null= False)
@@ -34,11 +35,19 @@ class set_of_test(models.Model):
 class test_assigned(models.Model):
     user_id = models.TextField()
     set_of_test_id = models.TextField()
-    completion_status = models.BooleanField(default=False)
+    listening_status = models.BooleanField(default=False)
+    reading_status = models.BooleanField(default=False)
+    writing_status = models.BooleanField(default=False)
+    speaking_status = models.BooleanField(default=False)
     listening_score = models.TextField(blank=True)
     reading_score = models.TextField(blank=True)
     writing_score = models.TextField(blank=True)
     speaking_score = models.TextField(blank=True)
+    listening_answers = models.TextField(blank=True)
+    reading_answers = models.TextField(blank=True)
+    writing_answers = models.TextField(blank=True)
+    speaking_answers = models.TextField(blank=True)
     writing_remarks = models.TextField(blank=True)
     speaking_remarks = models.TextField(blank=True)
+    completion_status = models.BooleanField(default=False)
     admin_check_status = models.BooleanField(default=False)

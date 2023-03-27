@@ -15,12 +15,17 @@ urlpatterns = [
     path('sideBar',views.sideBar,name='sideBar'),
     path('studentTestView',views.studentTestView,name='studentTestView'),
     path('studentReportView',views.studentReportView,name='studentReportView'),
+    path('readingTestPage',views.readingTestPage,name='readingTestPage'),
+    path('readingTestSubmit',views.readingTestSubmit,name='readingTestSubmit'),
     
     path('adminCreateBatch',ad_views.adminCreateBatch,name='adminCreateBatch'),
     path('adminBatchList',ad_views.adminBatchList,name='adminBatchList'),
     path('adminDeleteBatch',ad_views.adminDeleteBatch,name='adminDeleteBatch'),
     path('adminStudentList',ad_views.adminStudentList,name='adminStudentList'),
     path('adminUpdateBatch',ad_views.adminUpdateBatch,name='adminUpdateBatch'),
+    path('adminAssestmentBatchList',ad_views.adminAssestmentBatchList,name='adminAssestmentBatchList'),
+    path('assigmentModalView',ad_views.assigmentModalView,name='assigmentModalView'),
+    path('addAssignmentToBatch',ad_views.addAssignmentToBatch,name='addAssignmentToBatch'),
     # path('index',views.index,name='index'),
     
 
